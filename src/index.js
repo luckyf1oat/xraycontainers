@@ -1,8 +1,8 @@
 import { Container } from "@cloudflare/containers";
 
-export class XrayContainer4 extends Container {
+export class XrayContainer extends Container {
   defaultPort = 8080;
-  sleepAfter = "2h";
+  sleepAfter = "12h";
 }
 
 export default {
@@ -20,12 +20,12 @@ export default {
       );
     }
 
-    const container = env.XRAY4.getByName("default");
+    const container = env.XRAY.getByName("default");
     return container.fetch(request);
   },
 
   async scheduled(_event, env, _ctx) {
-    const container = env.XRAY4.getByName("default");
+    const container = env.XRAY.getByName("default");
     const runAt = new Date().toISOString();
 
     try {

@@ -3,12 +3,6 @@ main = "src/index.js"
 compatibility_date = "2026-03-26"
 workers_dev = false
 
-# 你的 路由设置
-routes = [
-    { pattern = "xray4.5671234.xyz/*", zone_name = "5671234.xyz" },
-
-]
-
 [triggers]
 crons = ["*/5 * * * *"]
 
@@ -26,7 +20,7 @@ invocation_logs = true
 mode = "smart"
 
 [[containers]]
-class_name = "XrayContainer4"
+class_name = "XrayContainer"
 image = "./Dockerfile"
 instance_type = "standard-4"
 
@@ -36,9 +30,9 @@ instance_type = "standard-4"
 regions = ["APAC"]
 
 [[durable_objects.bindings]]
-name = "XRAY4"
-class_name = "XrayContainer4"
+name = "XRAY"
+class_name = "XrayContainer"
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = [ "XrayContainer4" ]
+new_sqlite_classes = [ "XrayContainer" ]
