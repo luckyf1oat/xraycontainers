@@ -1,0 +1,5 @@
+node_modules
+.wrangler
+cf-containers-docs.txt
+package-lock.json
+npm-debug.log

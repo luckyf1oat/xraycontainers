@@ -1,0 +1,44 @@
+name = "xray-container4"
+main = "src/index.js"
+compatibility_date = "2026-03-26"
+workers_dev = false
+
+# 你的 路由设置
+routes = [
+    { pattern = "xray4.5671234.xyz/*", zone_name = "5671234.xyz" },
+
+]
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[limits]
+cpu_ms = 300000
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+#智能放置
+[placement]
+mode = "smart"
+
+[[containers]]
+class_name = "XrayContainer4"
+image = "./Dockerfile"
+instance_type = "standard-4"
+
+# max_instances = 20
+
+[containers.constraints]
+regions = ["APAC"]
+
+[[durable_objects.bindings]]
+name = "XRAY4"
+class_name = "XrayContainer4"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = [ "XrayContainer4" ]
