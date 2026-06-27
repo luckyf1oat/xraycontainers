@@ -1,7 +1,8 @@
-name = "xray-container4"
+name = "xraycontainer"
 main = "src/index.js"
 compatibility_date = "2026-03-26"
 workers_dev = false
+
 
 [triggers]
 crons = ["*/5 * * * *"]
@@ -22,12 +23,12 @@ mode = "smart"
 [[containers]]
 class_name = "XrayContainer"
 image = "./Dockerfile"
-instance_type = "standard-4"
+instance_type = "standard-2"
 
 # max_instances = 20
 
 [containers.constraints]
-regions = ["APAC"]
+regions = ["WNAM"]
 
 [[durable_objects.bindings]]
 name = "XRAY"

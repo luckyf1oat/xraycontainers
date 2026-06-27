@@ -1,5 +1,5 @@
 {
-  "name": "xray-cloudflare-containers4",
+  "name": "xray-cloudflare-containers",
   "private": true,
   "type": "module",
   "scripts": {
