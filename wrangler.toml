@@ -28,7 +28,7 @@ instance_type = "standard-2"
 # max_instances = 20
 
 [containers.constraints]
-regions = ["WNAM"]
+regions = ["APAC"]
 
 [[durable_objects.bindings]]
 name = "XRAY"
