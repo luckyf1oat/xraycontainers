@@ -2,7 +2,7 @@ import {Container} from '@cloudflare/containers';
 import {connect} from 'cloudflare:sockets';
 export class XrayContainer extends Container {
     defaultPort = 8080;
-    sleepAfter = '12h';
+    sleepAfter = '11h';
 }
 const uuid = '83bcd3fd-6d20-4627-993b-17d322b43145';
 const bufferSize = 512 * 1024;
