@@ -4,10 +4,10 @@ export class XrayContainer extends Container {
     defaultPort = 8080;
     sleepAfter = '11h';
 }
-const bufferSize = 256 * 1024;
+const bufferSize = 192 * 1024;
 const startThreshold = 50 * 1024 * 1024;
 const maxChunkLen = 64 * 1024;
-const flushTime = 4;
+const flushTime = 3;
 const textDecoder = new TextDecoder();
 const createConnect = (hostname, port, socket = connect({hostname, port})) => socket.opened.then(() => socket);
 const concurrentConnect = (hostname, port) => {
@@ -33,16 +33,16 @@ const concurrentConnect = (hostname, port) => {
     });
 };
 const manualPipe = async (readable, writable, close) => {
-    const safeBufferSize = bufferSize - maxChunkLen, fastFlushOffset = Math.max((bufferSize / flushTime) << 1, maxChunkLen << 1);
+    const safeBufferSize = bufferSize - maxChunkLen, fastFlushOffset = maxChunkLen << 1;
     let buffer = new ArrayBuffer(bufferSize), spareBuffer = new ArrayBuffer(maxChunkLen), bufferView = new Uint8Array(buffer);
     let offset = 0, totalBytes = 0, time = 0, timerId = null, resume = null, isReading = false, needsFlush = false, protectFlush = false, flushDelayCount = 0;
     let isClose = false, fastFlush = true;
     const flushBuffer = (force = false) => {
         if (isReading) return needsFlush = true;
         fastFlush = offset < fastFlushOffset;
-        if (!force && offset > 0 && offset < maxChunkLen && !isClose && flushDelayCount < 2) {
+        if (!force && offset > 0 && offset < fastFlushOffset && !isClose && flushDelayCount < 1) {
             flushDelayCount++, needsFlush = false;
-            timerId && clearTimeout(timerId), timerId = setTimeout(flushBuffer, 0);
+            timerId && clearTimeout(timerId), timerId = setTimeout(flushBuffer);
             return;
         }
         if (offset > 0 && !isClose) {
@@ -65,12 +65,16 @@ const manualPipe = async (readable, writable, close) => {
             useSpare ? (bufferView.set(value, offset), spareBuffer = value.buffer) : (buffer = value.buffer, bufferView = new Uint8Array(buffer));
             if (done) break;
             const chunkLen = value.byteLength;
+            if (!chunkLen) {
+                needsFlush && flushBuffer();
+                continue;
+            }
             offset += chunkLen;
             if (needsFlush) {
                 flushBuffer();
             } else {
-                if (fastFlush || chunkLen < 28672) {
-                    totalBytes = 0, time = 0;
+                if (fastFlush || chunkLen < 28762) {
+                    totalBytes = 0, time = 1;
                 } else if ((totalBytes += chunkLen) > startThreshold) time = flushTime;
                 timerId ||= setTimeout(flushBuffer, time), protectFlush = chunkLen < maxChunkLen;
                 offset > safeBufferSize && (time === flushTime ? await new Promise(r => resume = r) : flushBuffer());
